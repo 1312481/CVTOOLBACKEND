@@ -15,13 +15,14 @@ router.get('/', function(req,res,next){
 });
 
 
-router.put('/update', function(req,res,next){
-    var profile = req.body;
-    var updatePro= {};
-    updatePro.personalInfo = profile.personalInfo;
-
-    db.info.update({_id: mongojs.ObjectId(req.params.id)}, 
-    updatePro, {}, function(err,task){
+router.post('/updategeneralinfomation', function(req,res,next){
+    var profile = req.body.profile;
+    var key = req.body.key;
+    console.log(profile);
+    console.log(key);
+   
+    db.info.update({_id: mongojs.ObjectId(key)}, 
+    {$set: {personalInfo: profile}}, {multi: true}, function(err,task){
         if(err){
             res.send(err);
         }
