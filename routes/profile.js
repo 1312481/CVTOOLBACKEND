@@ -30,4 +30,55 @@ router.post('/updategeneralinfomation', function(req,res,next){
     })
 })
 
+
+router.post('/updateeducation', function(req,res,next){
+    console.log('aaa');
+    var education = req.body.profile;
+    console.log(education);
+    var key = req.body.key;
+    console.log(key);
+    
+  
+   
+    db.info.update({_id: mongojs.ObjectId(key)}, 
+    {$set: {education: education}}, {multi: true}, function(err,task){
+        if(err){
+            res.send(err);
+        }
+        res.json(task);
+    })
+})
+
+
+router.post('/updatetechnicalskill', function(req,res,next){
+    var technicalSkill = req.body.profile;
+    var key = req.body.key;
+
+  
+   
+    db.info.update({_id: mongojs.ObjectId(key)}, 
+    {$set: {technicalSkill: technicalSkill}}, {multi: true}, function(err,task){
+        if(err){
+            res.send(err);
+        }
+        res.json(task);
+    })
+})
+
+
+router.post('/updateexperience', function(req,res,next){
+    var experience = req.body.profile;
+    var key = req.body.key;
+
+  
+   
+    db.info.update({_id: mongojs.ObjectId(key)}, 
+    {$set: {experience: experience}}, {multi: true}, function(err,task){
+        if(err){
+            res.send(err);
+        }
+        res.json(task);
+    })
+})
+
 module.exports = router;
