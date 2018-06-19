@@ -17,12 +17,16 @@ router.get('/', function(req,res,next){
 
 router.post('/updategeneralinfomation', function(req,res,next){
     var profile = req.body.profile;
-    var key = req.body.key;
+    var key = '5b1f70e9e7179a58927feb37';
     console.log(profile);
     console.log(key);
+
+
    
     db.info.update({_id: mongojs.ObjectId(key)}, 
-    {$set: {personalInfo: profile}}, {multi: true}, function(err,task){
+    {$set: {"data.$[t].personalInfo": profile}}, 
+    {arrayFilters: [{"t.user": "SD123"}], multi: true }, 
+    function(err,task){
         if(err){
             res.send(err);
         }
