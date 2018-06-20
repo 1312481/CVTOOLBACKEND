@@ -5,15 +5,40 @@ var ObjectId = mongojs.ObjectId;
 var db = mongojs('mongodb://sang:sang2810@ds127439.mlab.com:27439/mytasklist_sang', ['info']);
 
 
-router.get('/', function (req, res, next) {
-    db.info.find(function (err, profile) {
-        if (err) {
-            console.log(err);
-            res.send(err);
-        }
-        res.json(profile);
-    })
+router.get('/:id', function (req, res, next) {
+    var user = req.params.id;
+    setTimeout(
+        function(){ 
+            db.info.find({user: user},function (err, profile) {
+                if (err) {
+                    console.log(err);
+                    res.send(err);
+                }
+                console.log('profile la: ',profile);
+                res.json(profile);
+            }); 
+    }, 500);
+    
+
 });
+
+router.post('/register', function (req, res, next) {
+    var user = req.body.key;
+    var profile = req.body.profile;
+    var data = [];
+    data.push(profile);
+    db.info.find({user: user}, function(err,docs){
+        
+        if(docs.length === 0){
+            db.info.save({user: user, data});
+        }
+        else{
+        }
+    })
+
+
+});
+
 
 
 router.post('/updategeneralinfomation', function (req, res, next) {
@@ -22,38 +47,7 @@ router.post('/updategeneralinfomation', function (req, res, next) {
     var keytest = 'SD123'
     console.log(profile);
     console.log(key);
-    db.info.find({ "_id": ObjectId(keytest) }, { $set: { "create": "Sang" } }, function (err, user) {
-        if (err) {
-            console.log('Error updating object: ' + err);
-            res.send({ 'error': 'An error has occurred' });
-        } else {
-            console.log('' + result + ' document(s) updated');
-            res.send(user);
-        }
-    })
-
-    // db.info.update({name: 'mathias'}, {$set: {name: 'Sang'}}, {multi: true}, function () {
-    //     // the update is complete
-    // })
-
-    // db.info.update({_id: mongojs.ObjectId(key)}, 
-    // {$set: {personalInfo: profile}}, {multi: true}, function(err,task){
-    //     if(err){
-    //         res.send(err);
-    //     }
-    //     res.json(task);
-    // })
-
-
-    // db.info.update({}, 
-    // {$set: {"data.$[t].personalInfo": profile}}, 
-    // {arrayFilters: [{"t.user": "SD123"}], multi: true }, 
-    // function(err,task){
-    //     if(err){
-    //         res.send(err);
-    //     }
-    //     res.json(task);
-    // })
+   
 })
 
 
