@@ -8,17 +8,16 @@ var db = mongojs('mongodb://sang:sang2810@ds127439.mlab.com:27439/mytasklist_san
 router.get('/:id', function (req, res, next) {
     var user = req.params.id;
     setTimeout(
-        function(){ 
-            db.info.find({user: user},function (err, profile) {
+        function () {
+            db.info.find({ user: user }, function (err, profile) {
                 if (err) {
                     console.log(err);
                     res.send(err);
                 }
-                console.log('profile la: ',profile);
                 res.json(profile);
-            }); 
-    }, 500);
-    
+            });
+        }, 500);
+
 
 });
 
@@ -27,12 +26,19 @@ router.post('/register', function (req, res, next) {
     var profile = req.body.profile;
     var data = [];
     data.push(profile);
-    db.info.find({user: user}, function(err,docs){
-        
-        if(docs.length === 0){
-            db.info.save({user: user, data});
+    db.info.find({ user: user }, function (err, docs) {
+        if (docs.length === 0) {
+            db.info.save({ user: user, data });
         }
-        else{
+        else {
+            var key = docs[0]._id;
+            db.info.update({ _id: key },
+                { $push: { data: profile } }, { multi: true }, function (err, task) {
+                    if (err) {
+                        res.send(err);
+                    }
+                    res.json(task);
+                })
         }
     })
 
@@ -43,11 +49,23 @@ router.post('/register', function (req, res, next) {
 
 router.post('/updategeneralinfomation', function (req, res, next) {
     var profile = req.body.profile;
-    var key = '5b1f70e9e7179a58927feb37';
-    var keytest = 'SD123'
-    console.log(profile);
-    console.log(key);
-   
+    var user = req.body.key;
+    var key = "";
+    db.info.find({ user: user }, function (err, profileDB) {
+        if (err) {
+            console.log(err);
+            res.send(err);
+        }
+        db.info.update({ _id: mongojs.ObjectId(profileDB[0]._id) },
+            { $set: { "data.0.personalInfo": profile } }, { multi: true }, function (err, task) {
+                if (err) {
+                    res.send(err);
+                }
+                res.json(task);
+            })
+    });
+
+
 })
 
 
