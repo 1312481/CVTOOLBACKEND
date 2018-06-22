@@ -16,7 +16,7 @@ router.get('/:id', function (req, res, next) {
                 }
                 res.json(profile);
             });
-        }, 500);
+        }, 2000);
 
 
 });
@@ -50,14 +50,20 @@ router.post('/register', function (req, res, next) {
 router.post('/updategeneralinfomation', function (req, res, next) {
     var profile = req.body.profile;
     var user = req.body.key;
-    var key = "";
+    var version = req.body.version;
+    var keyObject = "data."+ version + ".personalInfo";
+
+    var objectUpdated = {
+        
+    }
+    objectUpdated[keyObject] = profile;
     db.info.find({ user: user }, function (err, profileDB) {
         if (err) {
             console.log(err);
             res.send(err);
         }
         db.info.update({ _id: mongojs.ObjectId(profileDB[0]._id) },
-            { $set: { "data.0.personalInfo": profile } }, { multi: true }, function (err, task) {
+            { $set: objectUpdated  }, { multi: true }, function (err, task) {
                 if (err) {
                     res.send(err);
                 }
@@ -69,39 +75,57 @@ router.post('/updategeneralinfomation', function (req, res, next) {
 })
 
 
-router.post('/updateeducation', function (req, res, next) {
-    console.log('aaa');
-    var education = req.body.profile;
-    console.log(education);
-    var key = req.body.key;
-    console.log(key);
-
-
-
-    db.info.update({ _id: mongojs.ObjectId(key) },
-        { $set: { education: education } }, { multi: true }, function (err, task) {
-            if (err) {
-                res.send(err);
-            }
-            res.json(task);
-        })
-})
-
-
 router.post('/updatetechnicalskill', function (req, res, next) {
     var technicalSkill = req.body.profile;
-    var key = req.body.key;
+    var user = req.body.key;
+    var version = req.body.version;
+    var keyObject = "data."+ version + ".technicalSkill";
+    var objectUpdated = {
+        
+    }
+    objectUpdated[keyObject] = technicalSkill;
+    db.info.find({ user: user }, function (err, profileDB) {
+        if (err) {
+            console.log(err);
+            res.send(err);
+        }
+        db.info.update({ _id: mongojs.ObjectId(profileDB[0]._id) },
+            { $set: objectUpdated  }, { multi: true }, function (err, task) {
+                if (err) {
+                    res.send(err);
+                }
+                res.json(task);
+            })
+    });
 
-
-
-    db.info.update({ _id: mongojs.ObjectId(key) },
-        { $set: { technicalSkill: technicalSkill } }, { multi: true }, function (err, task) {
-            if (err) {
-                res.send(err);
-            }
-            res.json(task);
-        })
 })
+
+
+router.post('/updateeducation', function (req, res, next) {
+    var education = req.body.profile;
+    var user = req.body.key;
+    var version = req.body.version;
+    var keyObject = "data."+ version + ".education";
+    var objectUpdated = {
+        
+    }
+    objectUpdated[keyObject] = education;
+    db.info.find({ user: user }, function (err, profileDB) {
+        if (err) {
+            console.log(err);
+            res.send(err);
+        }
+        db.info.update({ _id: mongojs.ObjectId(profileDB[0]._id) },
+            { $set: objectUpdated  }, { multi: true }, function (err, task) {
+                if (err) {
+                    res.send(err);
+                }
+                res.json(task);
+            })
+    });
+
+})
+
 
 
 router.post('/updateexperience', function (req, res, next) {
