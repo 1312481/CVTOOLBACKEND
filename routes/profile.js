@@ -24,9 +24,12 @@ router.get('/:id', function (req, res, next) {
 router.post('/register', function (req, res, next) {
     var user = req.body.key;
     var profile = req.body.profile;
+    console.log(user);
+    console.log(profile)
     var data = [];
     data.push(profile);
     db.info.find({ user: user }, function (err, docs) {
+      
         if (docs.length === 0) {
             db.info.save({ user: user, data });
         }
@@ -129,18 +132,30 @@ router.post('/updateeducation', function (req, res, next) {
 
 
 router.post('/updateexperience', function (req, res, next) {
-    var experience = req.body.profile;
-    var key = req.body.key;
 
 
-
-    db.info.update({ _id: mongojs.ObjectId(key) },
-        { $set: { experience: experience } }, { multi: true }, function (err, task) {
-            if (err) {
-                res.send(err);
-            }
-            res.json(task);
-        })
+    var education = req.body.profile;
+    var user = req.body.key;
+    var version = req.body.version;
+    var keyObject = "data."+ version + ".experience";
+    var objectUpdated = {
+        
+    }
+    objectUpdated[keyObject] = education;
+    db.info.find({ user: user }, function (err, profileDB) {
+        if (err) {
+            console.log(err);
+            res.send(err);
+        }
+        db.info.update({ _id: mongojs.ObjectId(profileDB[0]._id) },
+            { $set: objectUpdated  }, { multi: true }, function (err, task) {
+                if (err) {
+                    res.send(err);
+                }
+                res.json(task);
+            })
+    });
+    
 })
 
 module.exports = router;
