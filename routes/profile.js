@@ -24,10 +24,12 @@ router.get('/:id', function (req, res, next) {
 router.post('/register', function (req, res, next) {
     var user = req.body.key;
     var profile = req.body.profile;
-    console.log(user);
-    console.log(profile)
+    var tagName = req.body.version;
     var data = [];
+    profile.tagName = tagName;
     data.push(profile);
+
+
     db.info.find({ user: user }, function (err, docs) {
       
         if (docs.length === 0) {
