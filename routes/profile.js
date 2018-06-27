@@ -38,6 +38,30 @@ router.post('/checkUserExistence', function (req, res, next) {
         res.json('success')
     }
 });
+router.post('/updateversion', function (req, res, next) {
+    var versionName = req.body.profile;
+    var user = req.body.key;
+    var version = req.body.version;
+    var keyObject = "data." + version + ".tagName";
+    var objectUpdated = {
+
+    }
+    objectUpdated[keyObject] = versionName;
+    db.info.find({ user: user }, function (err, profileDB) {
+        if (err) {
+            console.log(err);
+            res.send(err);
+        }
+        db.info.update({ _id: mongojs.ObjectId(profileDB[0]._id) },
+            { $set: objectUpdated }, { multi: true }, function (err, task) {
+                if (err) {
+                    res.send(err);
+                }
+                res.json(task);
+            })
+    });
+
+})
 router.post('/register', function (req, res, next) {
     var user = req.body.key;
     var profile = req.body.profile;
