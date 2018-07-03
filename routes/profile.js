@@ -67,16 +67,19 @@ router.post('/register', function (req, res, next) {
     var profile = req.body.profile;
     var tagName = req.body.version;
     var data = [];
-    profile.tagName = tagName;
-    data.push(profile);
-
+    if(profile !== ''){
+        profile.tagName = tagName;
+        data.push(profile);
+    }
+    
+    
 
     db.info.find({ user: user }, function (err, docs) {
 
         if (docs.length === 0) {
             db.info.save({ user: user, data });
         }
-        else {
+        else if (profile !== '') {
             var key = docs[0]._id;
             db.info.update({ _id: key },
                 { $push: { data: profile } }, { multi: true }, function (err, task) {
@@ -85,6 +88,8 @@ router.post('/register', function (req, res, next) {
                     }
                     res.json(task);
                 })
+        }else{
+            res.json('success');
         }
     })
 });
